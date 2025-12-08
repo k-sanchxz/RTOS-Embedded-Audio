@@ -19,23 +19,25 @@ bool open_audio_input() {
     return true;
 }
 
-bool read_audio_frame(std::vector<int16_t>& frame) {
+AudioReadStatus read_audio_frame(std::vector<int16_t>& frame) {
     frame.resize(AUDIO_FRAME_SAMPLES);
     const size_t total_bytes = AUDIO_FRAME_SAMPLES * AUDIO_BYTES_PER_SAMPLE;
+    // std::cout<<"JUST TEST: "<<frame.data()<<std::endl; 
     uint8_t* buffer = reinterpret_cast<uint8_t*>(frame.data());
     size_t bytes_read = 0;
     while (bytes_read < total_bytes) {
+        // writing to frame.data()
         ssize_t n = read(audio_fifo_fd, buffer + bytes_read, total_bytes - bytes_read);
         if (n == 0) {
             // EOF
-            return false;
+            return AudioReadStatus::EndOfFile;
         } else if (n < 0) {
             std::cerr << "[DEVICE] Error reading audio frame from FIFO" << std::endl;
-            return false;
+            return AudioReadStatus::Error;
         }
         bytes_read += n;
     }
-    return true;
+    return AudioReadStatus::Success;
 }
 
 void close_audio_input() {

@@ -1,14 +1,13 @@
-// This file will only define:
-// FIFO path string
-// Audio sample format parameters
-// Frame size (samples per read)
+#ifndef IPC_CONFIG_H
+#define IPC_CONFIG_H
 
-constexpr const char* AUDIO_IN_FIFO_PATH =  "/home/k_sxnchz/RTOS_Audio_Project/runtime/audio_in.fifo"; 
 
-// audio sample format parameter (f_hz, y(amplitude), x(time))
-constexpr const int AUDIO_SAMPLE_RATE_HZ = 160000; 
-constexpr const int AUDIO_BYTES_PER_SAMPLE = 2; 
-constexpr const int AUDIO_CHANNELS = 1; 
+constexpr const char* AUDIO_IN_FIFO_PATH =
+    "/home/k_sxnchz/RTOS-Embedded-Audio/runtime/audio_in.fifo";
 
-// frame size 
-constexpr int AUDIO_FRAME_SAMPLES = 1024; 
+constexpr const int AUDIO_SAMPLE_RATE_HZ = 16000;
+constexpr const int AUDIO_BYTES_PER_SAMPLE = 2;
+constexpr const int AUDIO_CHANNELS = 1;
+constexpr int AUDIO_FRAME_SAMPLES = 1024;
+
+#endif // IPC_CONFIG_H

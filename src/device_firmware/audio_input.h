@@ -7,8 +7,11 @@
 // Opens the audio input FIFO for reading
 bool open_audio_input();
 
+// Status for reading audio frames
+enum class AudioReadStatus { Success, EndOfFile, Error };
+
 // Reads a single audio frame into the provided vector
-bool read_audio_frame(std::vector<int16_t>& frame);
+AudioReadStatus read_audio_frame(std::vector<int16_t>& frame);
 
 // Closes the audio input FIFO
 void close_audio_input();
