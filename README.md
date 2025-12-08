@@ -95,3 +95,5 @@ Terminal 2: Inject audio using Python Script:
   python3 scripts/send_audio.py audios/<YOUR_AUDIO_FILE>.wav
 
 
+## Note:
+The real time side of the system is fully working. The Python script continously send the audio into the FIFO, the C++ firmware running in QEMU reads and processes each frame and moves them throught the pipeline correctly. The part that still needs refinement is the signal processing code. Some FFT threshold and frequency boundaries in the classicfication logic need adjustmments before all sounds are detected consistely, but the core embedded project which is the real time audio reading and processing is functioning as intended. 
