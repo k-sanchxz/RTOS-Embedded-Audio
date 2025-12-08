@@ -73,15 +73,22 @@ RTOS-EMBEDDED-AUDIO/
 ---
 ## Required Local Setup (Important)
 
-The runtime directory is not in the repo and has to be created locally
+The runtime directory and FIFO are not tracked by Git and they have to be added locally before running the system 
 
 ---
-Create the Runtime FIFO Directory
+Create the Runtime FIFO Directory:
 This is a virtual UART used by the embedded device: 
   mkdir runtime
   mkfifo runtime/audio_in.fifo
   chmod 666 runtime/audio_in.fifo
-
+  
+Update the FIFO Path in the firmware: 
+  open src/device_firmware/ipc_config.h
+  update this line: 
+    constexpr const char* AUDIO_IN_FIFO_PATH =
+    "/home/YOUR_USERNAME/RTOS-Embedded-Audio/runtime/audio_in.fifo";
+  If this path is incorrec then the firmware will fail to open the FIFO which will lead to an error since no audio will be        received. 
+    
 Compile the firmware for ARM: 
   arm-linux-gnueabihf-g++ src/main.cpp src/device_firmware/*.cpp -o main
 
