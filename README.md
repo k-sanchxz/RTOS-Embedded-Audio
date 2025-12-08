@@ -1,9 +1,6 @@
 # Real-Time Embedded Audio Anomaly Detection Device
 QEMU + C++ + Python
 
-A real-time embedded audio monitoring system that streams WAV audio from a Linux host into a simulated ARM device via virtual UART, performs FFT-based signal processing, and classifies sounds using RTOS-style task scheduling
-
-
 - Python = controlled audio injection  
 - FIFO = simulated UART interface  
 - QEMU ARM = simulated embedded processor  
