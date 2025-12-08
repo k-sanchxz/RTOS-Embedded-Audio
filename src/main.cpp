@@ -1,8 +1,9 @@
-
 #include <iostream>
 #include <unistd.h>
 #include "device_firmware/audio_input.h"
 #include "device_firmware/ipc_config.h"
+#include "device_firmware/dsp_engine.h"
+#include "device_firmware/classifier.h"
 using std::cout, std::cin, std::endl;
 
 int main() {
@@ -27,27 +28,28 @@ int main() {
             break;
         }
         if (!frame.empty()) {
-            // cout << "[DEVICE] Received audio frame of " << frame.size() << " samples. First sample: " << frame[0] << endl;
             all_frames.push_back(frame);
-        } else {
-            // cout << "Read audio frame, but frame is empty." << endl;
         }
     }
 
     close_audio_input();
-    
-    // int i = 0; 
-    // for (const auto& frame : all_frames) {
-    //     cout << "Frame " << i++ << " first 5 samples: ";
-    //     for (int j = 0; j < 5 && j < frame.size(); ++j) {
-    //         cout << frame[j] << " ";
-    //     }
-    //     cout << endl;
-    // }
-
     cout << "[DEVICE] Audio input FIFO closed." << endl;
     cout << "[DEVICE] Total frames received: " << all_frames.size() << endl;
-    // Proceed with next logic (e.g., processing/classification)
-    // ...
+
+    // Process all frames and classify
+    int voice_count = 0, dog_count = 0, doorbell_count = 0, alert_count = 0, unknown_count = 0;
+    dsp_engine::init_window(AUDIO_FRAME_SAMPLES);
+    for (const auto& frame : all_frames) {
+        AudioFeatureVector features = dsp_engine::extract_features(frame, AUDIO_SAMPLE_RATE_HZ);
+        SoundLabel label = classify(features);
+        switch (label) {
+            case VOICE: voice_count++; break;
+            case DOG: dog_count++; break;
+            case DOORBELL: doorbell_count++; break;
+            case ALERT: alert_count++; break;
+            default: unknown_count++; break;
+        }
+    }
+    cout << "[RESULTS] VOICE: " << voice_count << " DOG: " << dog_count << " DOORBELL: " << doorbell_count << " ALERT: " << alert_count << " UNKNOWN: " << unknown_count << endl;
     return 0;
 }

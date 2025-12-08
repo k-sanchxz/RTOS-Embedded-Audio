@@ -6,6 +6,8 @@
 #include "audio_input.h"
 #include "ipc_config.h"
 #include "rtos_tasks.h"
+#include "dsp_engine.h"
+#include "classifier.h"
 
 // global rtos state
 static std::atomic<bool> rtos_running{false};
@@ -70,9 +72,28 @@ void* audio_receive_task(void*) {
 
 void* signal_process_task(void*) {
     int proc_idx = 0;
+    dsp_engine::init_window(AUDIO_FRAME_SAMPLES);
     while (rtos_running) {
-        // TODO: pop frame from queue
-        std::cout << "[TASK] SignalProcessTask alive, processed frame " << proc_idx++ << std::endl;
+        std::vector<int16_t> frame;
+        AudioReadStatus status = read_audio_frame(frame);
+        if (status != AudioReadStatus::Success) {
+            std::cout << "[TASK] SignalProcessTask: end of stream or error." << std::endl;
+            break;
+        }
+        // DSP feature extraction
+        AudioFeatureVector features = dsp_engine::extract_features(frame, AUDIO_SAMPLE_RATE_HZ);
+        // Classification
+        SoundLabel label = classify(features);
+        // Print label
+        const char* label_str = "UNKNOWN";
+        switch (label) {
+            case VOICE: label_str = "VOICE"; break;
+            case DOG: label_str = "DOG"; break;
+            case DOORBELL: label_str = "DOORBELL"; break;
+            case ALERT: label_str = "ALERT"; break;
+            default: label_str = "UNKNOWN"; break;
+        }
+        std::cout << "[CLASS] " << label_str << std::endl;
         usleep(10 * 1000); // 10 ms
     }
     return nullptr;
