@@ -45,7 +45,7 @@ It simulates a **microphone feeding live audio into an embedded processor**.
 ---
 
 ## Project Structure 
-
+```text
 RTOS-EMBEDDED-AUDIO/
 ├── audios/ ← must be created locally
 │ └── your_audio_files.wav
@@ -72,7 +72,7 @@ RTOS-EMBEDDED-AUDIO/
 ├── .gitignore
 ├── LICENSE
 └── README.md
-
+```
 ---
 ## Required Local Setup (Important)
 
