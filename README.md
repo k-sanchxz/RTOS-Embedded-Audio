@@ -89,7 +89,7 @@ Update the FIFO Path in the firmware:
     constexpr const char* AUDIO_IN_FIFO_PATH =
     "/home/YOUR_USERNAME/RTOS-Embedded-Audio/runtime/audio_in.fifo";
 ```
-  If this path is incorrec then the firmware will fail to open the FIFO which will lead to an error since no audio will be        received. 
+  If this path is incorrect then the firmware will fail to open the FIFO which will lead to an error since no audio will be        received. 
     
 Compile the firmware for ARM: 
   arm-linux-gnueabihf-g++ src/main.cpp src/device_firmware/*.cpp -o main
