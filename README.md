@@ -1,28 +1,28 @@
 # Real-Time Embedded Audio Anomaly Detection Device
 QEMU + C++ + Python
 
-- Python = controlled audio injection  
-- FIFO = simulated UART interface  
+- Python = sends WAV audio into the system (FIFO) in frames 
+- FIFO = simulates UART linke between Linux and embedded target  
 - QEMU ARM = simulated embedded processor  
-- C++ firmware = real-time DSP + classification
+- C++ firmware = runs the DSP pipeline and classification logic
 
 ## What the C++ Firmware Is Doing
 
-The embedded firmware running inside QEMU performs the following:
+The embedded firmware running inside QEMU is structued as a frame based processing pipeline:
 
-- Continuously listens for incoming PCM audio  
-- Processes audio in real time  
+- Accesses the FIFO and listens for incoming audio frames
+- Processes audio in real time by converting raw int16 -> floating point for DSP
 - Performs FFT for frequency analysis  
-- Extracts RMS, variance, and burst features  
-- Classifies each frame as:
+- Computes RMS and also variance 
+- Classifies each frame as one of the follow:
   - VOICE  
   - DOG  
   - DOORBELL  
   - GLASS  
   - UNKNOWN  
-- Prints classifications directly to the console  
+- Then it prints classifications on the console  
 
-This simulates an **always-on embedded security listening device**.
+This setup emulates an always on embedded audio detection device where every frame is processed
 
 ---
 
@@ -37,18 +37,18 @@ This script:
 - Streams the audio to the embedded device using a FIFO  
 - Paces the stream in real time  
 
-It simulates a **microphone feeding live audio into an embedded processor**.
+It simulates a live audio coming into an embedded processor
 
 ---
 
 ## Project Structure 
 ```text
 RTOS-EMBEDDED-AUDIO/
-├── audios/ ← must be created locally
+├── audios/ 
 │ └── your_audio_files.wav
 ├── docs/
 │ └── ipc_protocol.md
-├── runtime/ ← must be created locally
+├── runtime/ ←--- this has be created locally ( read below for info)
 │ └── audio_in.fifo
 ├── scripts/
 │ ├── send_audio.py
@@ -65,7 +65,7 @@ RTOS-EMBEDDED-AUDIO/
 │ │ ├── rtos_tasks.cpp
 │ │ └── rtos_tasks.h
 │ └── main.cpp
-├── main ← compiled ARM binary
+├── main ← compiled ARM binary exec
 ├── .gitignore
 ├── LICENSE
 └── README.md
@@ -73,21 +73,10 @@ RTOS-EMBEDDED-AUDIO/
 ---
 ## Required Local Setup (Important)
 
-The `audios/` and `runtime/` directories are **not pushed to GitHub** and must be created locally.
+The runtime directory is not in the repo and has to be created locally
 
 ---
-
-### 1. Create the Audio Directory
-mkdir audios
-Place WAV files inside this folder
-Install FFmpeg (Required for Audio Conversion)
-  sudo apt update
-  sudo apt install ffmpeg
-Run this command in audios directory to convert to compatible format: 
-  ffmpeg -i audios/<ORIGINAL_FILE>.wav -t 15 -ac 1 -ar 16000 -sample_fmt s16 audios/<MODIFIED_FILE>.wav
-
-
-### 2. Create the Runtime FIFO Directory
+Create the Runtime FIFO Directory
 This is a virtual UART used by the embedded device: 
   mkdir runtime
   mkfifo runtime/audio_in.fifo
