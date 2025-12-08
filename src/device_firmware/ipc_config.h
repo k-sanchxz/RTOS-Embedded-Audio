@@ -1,7 +1,8 @@
 #ifndef IPC_CONFIG_H
 #define IPC_CONFIG_H
 
-
+// update path below:
+// "/home/YOUR_USERNAME/RTOS-Embedded-Audio/runtime/audio_in.fifo"
 constexpr const char* AUDIO_IN_FIFO_PATH =
     "/home/k_sxnchz/RTOS-Embedded-Audio/runtime/audio_in.fifo";
 
