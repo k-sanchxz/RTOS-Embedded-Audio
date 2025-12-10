@@ -2,7 +2,7 @@
 QEMU + C++ + Python
 
 - Python = sends WAV audio into the system (FIFO) in frames 
-- FIFO = simulates UART linke between Linux and embedded target  
+- FIFO = simulates UART link between Linux and embedded target  
 - QEMU ARM = simulated embedded processor  
 - C++ firmware = runs the DSP pipeline and classification logic
 
